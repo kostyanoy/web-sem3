@@ -13,7 +13,7 @@
     color: #333;
 }
 
-/* footer */
+/*footer*/
 .footer-info {
     background-color: #333;
     color: white;
@@ -26,18 +26,7 @@
     font-size: 14px;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-}
-
-main {
-    flex: 1;
-    margin: 10px;
-}
-
+/*canvas*/
 #myCanvas {
     padding-left: 0;
     padding-right: 0;
@@ -45,4 +34,49 @@ main {
     margin-right: auto;
     display: block;
     font-size: 20px;
+}
+
+/*canvas settings*/
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+.item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+.item select,
+.item label,
+.item .combobox {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+}
+.item label {
+    font-weight: bold;
+}
+.figure {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+}
+
+/*other*/
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+main {
+    flex: 1;
+    margin: 10px;
 }
