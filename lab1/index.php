@@ -19,31 +19,33 @@
     <div class="content">
         <div class="grid-container">
             <?php
-            for ($i = 1; $i <= 4; $i++) {
+            $numbers = [1, 2, 4, 3];
+            foreach ($numbers as $i) {
                 ?>
                 <div class="item">
-                    <select class="figure" id="figure<?php echo $i ?>">
-                        <option value="square">Квадрат</option>
+                    <select class="figure redraw" id="figure<?php echo $i ?>">
+                        <option value="nothing">Ничего</option>
+                        <option value="rectangle">Прямоугольник</option>
                         <option value="circle">Круг</option>
                         <option value="rhombus">Ромб</option>
                     </select>
-                    <div class="option">
-                        <label for="radius<?php echo $i ?>">Radius:</label>
-                        <select class="combobox" id="radius<?php echo $i ?>">
+                    <div class="item-option">
+                        <label for="radius<?php echo $i ?>">Радиус:</label>
+                        <select class="combobox redraw" id="radius<?php echo $i ?>">
                             <option value="r/2">R / 2</option>
                             <option value="r">R</option>
                         </select>
                     </div>
-                    <div class="option">
-                        <label for="height<?php echo $i ?>">Height:</label>
-                        <select class="combobox" id="height<?php echo $i ?>">
+                    <div class="item-option">
+                        <label for="height<?php echo $i ?>">Высота:</label>
+                        <select class="combobox redraw" id="height<?php echo $i ?>">
                             <option value="r/2">R / 2</option>
                             <option value="r">R</option>
                         </select>
                     </div>
-                    <div class="option">
-                        <label for="width<?php echo $i ?>">Width:</label>
-                        <select class="combobox" id="width<?php echo $i ?>">
+                    <div class="item-option">
+                        <label for="width<?php echo $i ?>">Ширина:</label>
+                        <select class="combobox redraw" id="width<?php echo $i ?>">
                             <option value="r/2">R / 2</option>
                             <option value="r">R</option>
                         </select>
@@ -53,10 +55,25 @@
         </div>
     </div>
 
-
     <div class="canvas-container">
         <canvas id="myCanvas" width="400" height="400"></canvas>
     </div>
+
+    <form class="point" action="php/hit-check.php" method="POST">
+        <div class="point-option">
+            <label for="x">X: </label>
+            <input type="number" name="x" id="x" required>
+        </div>
+        <div class="point-option">
+            <label for="y">Y: </label>
+            <input type="number" name="y" id="y" required>
+        </div>
+        <div class="point-option">
+            <label for="r">R: </label>
+            <input type="number" name="r" id="r" required>
+        </div>
+        <input type="submit" value="Отправить">
+    </form>
 </main>
 
 <script src="assets/js/canvas.js"></script>

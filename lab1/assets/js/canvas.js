@@ -80,6 +80,39 @@ function drawCircle(ctx, radius) {
     ctx.lineTo(w / 2, h / 2); // Connect back to the center
 }
 
+function redraw() {
+    ctx.clearRect(0, 0, canvasW, canvasH);
+    // draw figures
+    shift();
+    for (let i = 1; i <= 4; i++) {
+        let type = document.getElementById(`figure${i}`).value
+        let radius = (document.getElementById(`radius${i}`).value === "r/2") ? h / 4 : h / 2
+        let width = (document.getElementById(`width${i}`).value === "r/2") ? w / 4 : w / 2
+        let height = (document.getElementById(`height${i}`).value === "r/2") ? h / 4 : h / 2
+        console.log(radius)
+        switch (type) {
+            case "rectangle":
+                drawRectangle(ctx, width, height);
+                break;
+            case "circle":
+                drawCircle(ctx, radius);
+                break;
+            case "rhombus":
+                drawRhombus(ctx, width, height);
+                break;
+            default:
+                rotate(ctx, Math.PI / 2);
+                continue;
+        }
+        ctx.fillStyle = "cyan";
+        ctx.fill();
+        rotate(ctx, Math.PI / 2);
+    }
+
+    // draw graph
+    shift(true);
+    drawGraph(ctx);
+}
 
 // get canvas
 let canvas = document.getElementById("myCanvas");
@@ -90,29 +123,10 @@ let canvasW = canvas.width;
 
 let h = canvasH * 3 / 4;
 let w = canvasW * 3 / 4;
+redraw()
 
-// draw figures
-shift();
-drawRectangle(ctx, w / 2, h / 2);
-ctx.fillStyle = "cyan";
-ctx.fill();
-rotate(ctx, Math.PI / 2)
-drawCircle(ctx, h / 2);
-ctx.fillStyle = "cyan";
-ctx.fill();
-rotate(ctx, Math.PI / 2)
-drawRhombus(ctx, w/2, h / 4);
-ctx.fillStyle = "cyan";
-ctx.fill();
-rotate(ctx, Math.PI / 2)
-rotate(ctx, Math.PI / 2)
-
-
-// draw graph
-shift(true);
-drawGraph(ctx);
-
-// Обработчик события нажатия на холст
+// event listeners
+// canvas click
 canvas.addEventListener("mousedown", function (event) {
     var rect = canvas.getBoundingClientRect();
     var mouseX = event.clientX - rect.left;
@@ -127,3 +141,11 @@ canvas.addEventListener("mousedown", function (event) {
 
     console.log("Clicked at (x, y):", canvasX, canvasY);
 });
+
+// select change
+let redraws = document.getElementsByClassName("redraw");
+for (let i = 0; i < redraws.length; i++) {
+    redraws[i].addEventListener("change", redraw);
+}
+
+
