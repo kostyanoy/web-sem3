@@ -89,7 +89,10 @@ function redraw() {
         let radius = (document.getElementById(`radius${i}`).value === "r/2") ? h / 4 : h / 2
         let width = (document.getElementById(`width${i}`).value === "r/2") ? w / 4 : w / 2
         let height = (document.getElementById(`height${i}`).value === "r/2") ? h / 4 : h / 2
-        console.log(radius)
+
+        if (i % 2 === 0)
+            [height, width] = [width, height]
+
         switch (type) {
             case "rectangle":
                 drawRectangle(ctx, width, height);
@@ -128,18 +131,30 @@ redraw()
 // event listeners
 // canvas click
 canvas.addEventListener("mousedown", function (event) {
-    var rect = canvas.getBoundingClientRect();
-    var mouseX = event.clientX - rect.left;
-    var mouseY = event.clientY - rect.top;
+    let rField = document.getElementById("r");
+    let r = rField.value;
 
-    // Перевод координат в "координаты холста"
+    if (isNaN(r) || r <= 0)
+        return;
 
-    var canvasX = mouseX - canvas.width / 2;
-    var canvasY = -(mouseY - canvas.height / 2);
-    let a = ctx.getImageData(mouseX, mouseY, 2, 1)
-    console.log(a.data)
+    r = Math.round(r);
+    rField.value = r;
 
-    console.log("Clicked at (x, y):", canvasX, canvasY);
+    let xField = document.getElementById("x");
+    let yField = document.getElementById("y");
+
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = event.clientX - rect.left;
+    let mouseY = event.clientY - rect.top;
+
+    let canvasX = mouseX - canvas.width / 2;
+    let canvasY = -(mouseY - canvas.height / 2);
+
+    let x = Math.round(canvasX / (w / 2) * r);
+    let y = Math.round(canvasY / (h / 2) * r);
+
+    xField.value = x;
+    yField.value = y;
 });
 
 // select change

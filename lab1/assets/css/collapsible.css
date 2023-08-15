@@ -8,6 +8,15 @@
     width: 100%;
 }
 
+.collapsible:hover {
+    background-color: rgba(209, 209, 209, 0.95);
+}
+
+.collapsible::before {
+    content: "→ ";
+}
+
+
 .content {
     display: none;
     padding: 10px;
