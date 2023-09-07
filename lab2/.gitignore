@@ -1,0 +1,10 @@
+# IDEA files
+.idea/
+build/
+
+.gradle/
+gradle/
+gradle*
+
+# log
+*.log

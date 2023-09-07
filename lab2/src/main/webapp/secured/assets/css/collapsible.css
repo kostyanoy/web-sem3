@@ -1,0 +1,24 @@
+.collapsible {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+    text-align: center;
+    outline: none;
+    width: 100%;
+}
+
+.collapsible:hover {
+    background-color: rgba(209, 209, 209, 0.95);
+}
+
+.collapsible::before {
+    content: "→ ";
+}
+
+
+.content {
+    display: none;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}

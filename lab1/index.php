@@ -16,7 +16,6 @@
 
 <?php include_once 'includes/header.php'; ?>
 <main>
-    <h1>Лабораторная работа #1</h1>
     <form id="point-form" method="POST">
         <button class="collapsible">Выбор рисунка</button>
         <div class="content">
