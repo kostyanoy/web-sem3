@@ -111,19 +111,19 @@ input[type="submit"]:hover {
 }
 
 /*table*/
-#response {
+#response-table {
     border-collapse: collapse;
     width: 100%;
 }
-#response th, td {
+#response-table th, td {
     border: 1px solid black;
     padding: 8px;
     text-align: center;
 }
-#response th {
+#response-table th {
     background-color: #f2f2f2;
 }
-#response tr:nth-child(even) {
+#response-table tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 

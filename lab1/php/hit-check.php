@@ -1,5 +1,13 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    session_start();
+
+    $tableRows = "";
+    if (isset($_SESSION["tableRows"])) {
+        $tableRows = $_SESSION["tableRows"];
+    }
+
+
     $currentDateTime = date('Y-m-d H:i:s');
     $start = microtime(true);
 
@@ -32,18 +40,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $executionTime = microtime(true) - $start;
 
-    ?>
+    $row = "<tr>
+        <td>$currentDateTime</td>
+        <td>$executionTime</td>
+        <td>$r</td>
+        <td>$x</td>
+        <td>$y</td>
+        <td>$inside</td>
+    </tr>";
 
-    <tr>
-        <td><?php echo $currentDateTime ?></td>
-        <td><?php echo $executionTime ?></td>
-        <td><?php echo $r ?></td>
-        <td><?php echo $x ?></td>
-        <td><?php echo $y ?></td>
-        <td><?php echo $inside; ?></td>
-    </tr>
+    $tableRows = $tableRows . $row;
 
-    <?php
+    $_SESSION["tableRows"] = $tableRows;
+
+    echo $tableRows;
 }
 
 function checkInsideFigure($figure, $fr, $fh, $fw, $x, $y, $r): bool

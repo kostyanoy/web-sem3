@@ -17,7 +17,7 @@
 <?php include_once 'includes/header.php'; ?>
 <main>
     <form id="point-form" method="POST">
-        <button class="collapsible">Выбор рисунка</button>
+        <div class="collapsible">Выбор рисунка</div>
         <div class="content">
             <div class="grid-container">
                 <?php
@@ -78,7 +78,7 @@
         </div>
     </form>
 
-    <table id="response">
+    <table id="response-table">
         <thead>
         <tr>
             <th>Время запроса</th>
@@ -89,6 +89,7 @@
             <th>Внутри?</th>
         </tr>
         </thead>
+        <tbody id="response"> </tbody>
     </table>
 </main>
 

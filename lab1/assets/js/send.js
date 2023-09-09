@@ -8,7 +8,6 @@ $(document).ready(function () {
 
         if (r.value < 0) {
             r.value = 0;
-            console.log("SHIT");
             return;
         }
 
@@ -18,8 +17,9 @@ $(document).ready(function () {
             method: "POST",
             data: formData,
             success: function (response) {
-                $("#response").append(response);
+                $("#response").html(response);
             }
         });
+
     });
 });
