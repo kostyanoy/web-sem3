@@ -1,20 +1,26 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!(validate_number($_POST["x"]) && validate_number($_POST["y"]) && validate_number($_POST["r"])
+    && validate_number($_POST["timezoneOffsetMinutes"]))) {
+        exit();
+    }
+
     session_start();
 
     $tableRows = "";
-    if (isset($_SESSION["tableRows"])) {
-        $tableRows = $_SESSION["tableRows"];
-    }
+    // if (isset($_SESSION["tableRows"])) {
+    //     $tableRows = $_SESSION["tableRows"];
+    // }
 
+    $timezoneOffsetMinutes = $_POST['timezoneOffsetMinutes'];
+    $formattedDateTime = getCurrentTime($timezoneOffsetMinutes);
 
-    $currentDateTime = date('Y-m-d H:i:s');
     $start = microtime(true);
 
     $check = [];
-    $x = $_POST["x"];
-    $y = $_POST["y"];
-    $r = $_POST["r"];
+    $x = floatval($_POST["x"]);
+    $y = floatval($_POST["y"]);
+    $r = floatval($_POST["r"]);
 
     if ($r <= 0)
         exit();
@@ -38,10 +44,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $executionTime = microtime(true) - $start;
+    $executionTime = number_format((microtime(true) - $start) * 1_000_000);
 
     $row = "<tr>
-        <td>$currentDateTime</td>
+        <td>$formattedDateTime</td>
         <td>$executionTime</td>
         <td>$r</td>
         <td>$x</td>
@@ -69,6 +75,14 @@ function checkInsideFigure($figure, $fr, $fh, $fw, $x, $y, $r): bool
     return false;
 }
 
-?>
+function getCurrentTime($offsetMinutes){
+    
+    $time = new DateTime();
+    $time->add(new DateInterval(('PT' . $offsetMinutes . 'M')));
+    
+    return $time->format('Y-m-d H:i:s T');
+}
 
-
+function validate_number($arg){
+    return isset($arg) && is_numeric($arg);
+}

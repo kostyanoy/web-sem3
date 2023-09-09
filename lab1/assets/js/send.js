@@ -11,7 +11,17 @@ $(document).ready(function () {
             return;
         }
 
-        let formData = $(this).serialize();
+        $("#time-offset").val(-(new Date().getTimezoneOffset()));
+
+        console.log("HELP");
+        let formData = $(this);
+        formData[0]["timezoneOffsetMinutes"] = -(new Date().getTimezoneOffset());
+        console.log(formData);
+        formData = formData.serialize();
+
+        console.log(formData);
+
+
         $.post({
             url: "php/hit-check.php",
             method: "POST",
