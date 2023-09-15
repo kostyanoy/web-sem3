@@ -1,21 +1,31 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!(validate_number($_POST["x"]) && validate_number($_POST["y"]) && validate_number($_POST["r"])
-    && validate_number($_POST["timezoneOffsetMinutes"]))) {
-        exit();
+    if (isset($_POST["init"])){
+        init_request();
+    } else {
+        process_request();
+    }
+}
+function init_request() {
+    start_session();
+    echo get_storage_value("tableRows");
+}
+
+function process_request(){
+    if (!(validate_number($_POST, "x") && validate_number($_POST, "y") && validate_number($_POST, "r")
+    && validate_number($_POST, "timezoneOffsetMinutes"))) {
+        exit("Sorry not valid");
     }
 
-    session_start();
+    // session storage - save table 
+    start_session();
+    $tableRows = get_storage_value("tableRows");
 
-    $tableRows = "";
-    // if (isset($_SESSION["tableRows"])) {
-    //     $tableRows = $_SESSION["tableRows"];
-    // }
-
+    // format date-time
     $timezoneOffsetMinutes = $_POST['timezoneOffsetMinutes'];
     $formattedDateTime = getCurrentTime($timezoneOffsetMinutes);
 
-    $start = microtime(true);
+    $start = microtime(true); // start timer
 
     $check = [];
     $x = floatval($_POST["x"]);
@@ -46,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $executionTime = number_format((microtime(true) - $start) * 1_000_000);
 
+    // result row
     $row = "<tr>
         <td>$formattedDateTime</td>
         <td>$executionTime</td>
@@ -55,9 +66,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <td>$inside</td>
     </tr>";
 
-    $tableRows = $tableRows . $row;
+    // save  to storage
 
-    $_SESSION["tableRows"] = $tableRows;
+    $tableRows = $tableRows . $row;
+    save_storage_value("tableRows", $tableRows);
 
     echo $tableRows;
 }
@@ -75,6 +87,26 @@ function checkInsideFigure($figure, $fr, $fh, $fw, $x, $y, $r): bool
     return false;
 }
 
+// open session storage
+function start_session() {
+    session_start();
+}
+
+// get value from session storage by name
+function get_storage_value($name){
+    $result = "";
+    if (isset($_SESSION[$name])) {
+        $result = $_SESSION[$name];
+    }
+    return $result;
+}
+
+// set value in session storage by name
+function save_storage_value($name, $value){
+    $_SESSION[$name] = $value;
+}
+
+// get current time with given offset in minutes
 function getCurrentTime($offsetMinutes){
     
     $time = new DateTime();
@@ -83,6 +115,7 @@ function getCurrentTime($offsetMinutes){
     return $time->format('Y-m-d H:i:s T');
 }
 
-function validate_number($arg){
-    return isset($arg) && is_numeric($arg);
+// check if value is set and a number
+function validate_number($storage, $arg){
+    return isset($storage[$arg]) && is_numeric($storage[$arg]);
 }

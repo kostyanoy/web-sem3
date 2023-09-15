@@ -1,35 +1,45 @@
-$(document).ready(function () {
-    $("#point-form").submit(function (event) {
-        event.preventDefault();
+$(document).ready(function () { // wait until loading of document
+    $.post({
+        url: "php/hit-check.php",
+        data: { init: true },
+        success: showTable
+    })
 
+    // get table init
+    $(".r-button").click(function (event){
+        $(".r-button").removeClass("active");
+        $(this).addClass("active");
+        $("#r").val($(this).text());
+    })
+
+    // click first radius
+    $(".r-button")[0].click()
+
+
+    $("#point-form").submit(function (event) { // on sending form
+        event.preventDefault(); // do not reload page
+
+        // check radius > 0
         let r = $("#r")[0];
-        console.log(r);
-        console.log(r.value);
-
         if (r.value < 0) {
             r.value = 0;
             return;
         }
 
-        $("#time-offset").val(-(new Date().getTimezoneOffset()));
+        $("#time-offset").val(-(new Date().getTimezoneOffset())); // set user's date-time
 
-        console.log("HELP");
-        let formData = $(this);
-        formData[0]["timezoneOffsetMinutes"] = -(new Date().getTimezoneOffset());
-        console.log(formData);
-        formData = formData.serialize();
+        formData = $(this).serialize(); // get form data for ajax
 
         console.log(formData);
-
 
         $.post({
             url: "php/hit-check.php",
-            method: "POST",
             data: formData,
-            success: function (response) {
-                $("#response").html(response);
-            }
+            success: showTable
         });
-
     });
 });
+
+function showTable(response) {
+    $("#response").html(response);
+}

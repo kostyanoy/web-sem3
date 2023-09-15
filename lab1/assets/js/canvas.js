@@ -130,32 +130,32 @@ redraw()
 
 // event listeners
 // canvas click
-canvas.addEventListener("mousedown", function (event) {
-    let rField = document.getElementById("r");
-    let r = rField.value;
+// canvas.addEventListener("mousedown", function (event) {
+//     let rField = document.getElementById("r");
+//     let r = rField.value;
 
-    if (isNaN(r) || r <= 0)
-        return;
+//     if (isNaN(r) || r <= 0)
+//         return;
 
-    r = Math.round(r);
-    rField.value = r;
+//     r = Math.round(r);
+//     rField.value = r;
 
-    let xField = document.getElementById("x");
-    let yField = document.getElementById("y");
+//     let xField = document.getElementById("x");
+//     let yField = document.getElementById("y");
 
-    let rect = canvas.getBoundingClientRect();
-    let mouseX = event.clientX - rect.left;
-    let mouseY = event.clientY - rect.top;
+//     let rect = canvas.getBoundingClientRect();
+//     let mouseX = event.clientX - rect.left;
+//     let mouseY = event.clientY - rect.top;
 
-    let canvasX = mouseX - canvas.width / 2;
-    let canvasY = -(mouseY - canvas.height / 2);
+//     let canvasX = mouseX - canvas.width / 2;
+//     let canvasY = -(mouseY - canvas.height / 2);
 
-    let x = Math.round(canvasX / (w / 2) * r);
-    let y = Math.round(canvasY / (h / 2) * r);
+//     let x = Math.round(canvasX / (w / 2) * r);
+//     let y = Math.round(canvasY / (h / 2) * r);
 
-    xField.value = x;
-    yField.value = y;
-});
+//     xField.value = x;
+//     yField.value = y;
+// });
 
 // select change
 let redraws = document.getElementsByClassName("redraw");

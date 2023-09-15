@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
     <?php include_once 'includes/header.php'; ?>
     <main>
         <form id="point-form" method="POST">
@@ -25,7 +24,7 @@
                     <?php
                     $numbers = [1, 2, 4, 3];
                     foreach ($numbers as $i) {
-                    ?>
+                        ?>
                         <div class="item">
                             <select class="figure redraw" name="figure<?php echo $i ?>" id="figure<?php echo $i ?>">
                                 <option value="nothing">Ничего</option>
@@ -69,24 +68,25 @@
                     <?php
                     // Generate radio buttons for values from -3 to 5
                     for ($x = -3; $x <= 5; $x++) {
-                        echo '<input type="radio" name="x" value="' . $x . '"> ' . $x . '<br>';
+                        echo '<input type="radio" name="x" value="' . $x . '" required> ' . $x . '<br>';
                     }
                     ?>
                     <!-- <input type="number" name="x" id="x" required> -->
                 </div>
                 <div class="point-option">
                     <label for="y">Y: </label>
-                    <input type="number" name="y" id="y" required>
+                    <input type="number" name="y" id="y" min="-3" max="5" required>
                 </div>
                 <div class="point-option">
                     <label for="r">R: </label>
                     <?php
                     // Generate buttons for values from -3 to 5
-                    // for ($r = 1; $r <= 5; $r++) {
-                        // echo '<button onclick="chooseX(' . $r . ')">' . $r . '</button>';
-                    // }
+                    for ($r = 1; $r <= 5; $r++) {
+                        echo '<button type="button" class="r-button">' . $r . '</button>';
+                    }
                     ?>
-                    <input type="number" name="r" id="r" required>
+                    <!-- <input type="number" name="r" id="r" required> -->
+                    <input type="hidden" name="r" id="r" required>
                 </div>
                 <input id="time-offset" type="hidden" name="timezoneOffsetMinutes">
                 <input type="submit" value="Отправить">
