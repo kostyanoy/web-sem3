@@ -1,25 +1,32 @@
 <?php
+// activate on post request
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["init"])){
+    if (isset($_POST["init"])) {
         init_request();
     } else {
         process_request();
     }
 }
-function init_request() {
+
+// return saved rows
+function init_request()
+{
     start_session();
-    echo get_storage_value("tableRows");
+    echo createHtmlTableRows(get_storage_value("tableData", []));
+
 }
 
-function process_request(){
+// process new row
+function process_request()
+{
     if (!(validate_number($_POST, "x") && validate_number($_POST, "y") && validate_number($_POST, "r")
-    && validate_number($_POST, "timezoneOffsetMinutes"))) {
+        && validate_number($_POST, "timezoneOffsetMinutes"))) {
         exit("Sorry not valid");
     }
 
-    // session storage - save table 
+    // session storage - save table data
     start_session();
-    $tableRows = get_storage_value("tableRows");
+    $tableData = get_storage_value("tableData", []);
 
     // format date-time
     $timezoneOffsetMinutes = $_POST['timezoneOffsetMinutes'];
@@ -56,24 +63,42 @@ function process_request(){
 
     $executionTime = number_format((microtime(true) - $start) * 1_000_000);
 
-    // result row
-    $row = "<tr>
-        <td>$formattedDateTime</td>
-        <td>$executionTime</td>
-        <td>$r</td>
-        <td>$x</td>
-        <td>$y</td>
-        <td>$inside</td>
-    </tr>";
+    $newRow = [
+        'formattedDateTime' => $formattedDateTime,
+        'executionTime' => $executionTime,
+        'r' => $r,
+        'x' => $x,
+        'y' => $y,
+        'inside' => $inside,
+    ];
 
+    $tableData[] = $newRow;
+    
     // save  to storage
+    $tableRows = createHtmlTableRows($tableData);
+    save_storage_value("tableData", $tableData);
 
-    $tableRows = $tableRows . $row;
-    save_storage_value("tableRows", $tableRows);
-
+    //return table
     echo $tableRows;
 }
 
+// create html table content from given data
+function createHtmlTableRows($data) : string {
+    $result = "";
+    foreach ($data as $row) {
+        $result .= "<tr>";
+        $result .= "<td>{$row['formattedDateTime']}</td>";
+        $result .= "<td>{$row['executionTime']}</td>";
+        $result .= "<td>{$row['r']}</td>";
+        $result .= "<td>{$row['x']}</td>";
+        $result .= "<td>{$row['y']}</td>";
+        $result .= "<td>{$row['inside']}</td>";
+        $result .= "</tr>";
+    }
+    return $result;
+}
+
+// check if a point inside figure
 function checkInsideFigure($figure, $fr, $fh, $fw, $x, $y, $r): bool
 {
     switch ($figure) {
@@ -88,13 +113,15 @@ function checkInsideFigure($figure, $fr, $fh, $fw, $x, $y, $r): bool
 }
 
 // open session storage
-function start_session() {
+function start_session()
+{
     session_start();
 }
 
 // get value from session storage by name
-function get_storage_value($name){
-    $result = "";
+function get_storage_value($name, $default="")
+{
+    $result = $default;
     if (isset($_SESSION[$name])) {
         $result = $_SESSION[$name];
     }
@@ -102,20 +129,21 @@ function get_storage_value($name){
 }
 
 // set value in session storage by name
-function save_storage_value($name, $value){
+function save_storage_value($name, $value)
+{
     $_SESSION[$name] = $value;
 }
 
 // get current time with given offset in minutes
-function getCurrentTime($offsetMinutes){
-    
-    $time = new DateTime();
-    $time->add(new DateInterval(('PT' . $offsetMinutes . 'M')));
-    
-    return $time->format('Y-m-d H:i:s T');
+function getCurrentTime($offsetMinutes)
+{
+    date_default_timezone_set('UTC');
+    $timestamp = time() + ($offsetMinutes * 60); 
+    return date('Y-m-d H:i:s', $timestamp);
 }
 
 // check if value is set and a number
-function validate_number($storage, $arg){
+function validate_number($storage, $arg)
+{
     return isset($storage[$arg]) && is_numeric($storage[$arg]);
 }

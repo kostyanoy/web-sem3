@@ -1,6 +1,7 @@
 # IDEA files
 .idea/
 build/
+bin/
 
 .gradle/
 gradle/
