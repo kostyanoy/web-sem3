@@ -110,21 +110,39 @@ input[type="submit"]:hover {
     background-color: #0056b3;
 }
 
+
 /*table*/
-#response {
+#response-table {
     border-collapse: collapse;
     width: 100%;
 }
-#response th, td {
+#response-table th, td {
     border: 1px solid black;
     padding: 8px;
     text-align: center;
 }
-#response th {
+#response-table th {
     background-color: #f2f2f2;
 }
-#response tr:nth-child(even) {
+#response-table tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+/* links */
+a {
+    width: 50%;
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+a:hover {
+    background-color: #0056b3;
 }
 
 /*other*/

@@ -117,6 +117,32 @@ function redraw() {
     drawGraph(ctx);
 }
 
+function getParam(array, name) {
+    for (let index = 0; index < array.length; index++) {
+        if (array[index].name == name) {
+            return array[index].value;
+        }
+    }
+    return null;
+}
+
+function setParam(array, name, value) {
+    for (let index = 0; index < array.length; index++) {
+        if (array[index].name == name) {
+            array[index].value = value;
+            return;
+        }
+    }
+    array.push({"name": name, "value": value})
+}
+
+function drawPoint(x, y, r, color) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
 // get canvas
 let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
@@ -129,19 +155,13 @@ let w = canvasW * 3 / 4;
 redraw()
 
 // event listeners
-// canvas click
+// canvas click - show point
 canvas.addEventListener("mousedown", function (event) {
-    let rField = document.getElementById("r");
-    let r = rField.value;
+    let formData = $("#point-form").serializeArray();
 
+    let r = parseFloat(getParam(formData, "r"));
     if (isNaN(r) || r <= 0)
         return;
-
-    r = Math.round(r);
-    rField.value = r;
-
-    let xField = document.getElementById("x");
-    let yField = document.getElementById("y");
 
     let rect = canvas.getBoundingClientRect();
     let mouseX = event.clientX - rect.left;
@@ -150,11 +170,21 @@ canvas.addEventListener("mousedown", function (event) {
     let canvasX = mouseX - canvas.width / 2;
     let canvasY = -(mouseY - canvas.height / 2);
 
-    let x = Math.round(canvasX / (w / 2) * r);
-    let y = Math.round(canvasY / (h / 2) * r);
+    let x = (canvasX / (w / 2) * r).toFixed(2);
+    let y = (canvasY / (h / 2) * r).toFixed(2);
 
-    xField.value = x;
-    yField.value = y;
+    setParam(formData, "x", x);
+    setParam(formData, "y", y);
+    setParam(formData, "clickHandle", "true");
+
+    $.get({
+        url: "app",
+        data: formData,
+        success: function (response) {
+            let color = (response.trim() == "true") ? "green" : "red";
+            drawPoint(mouseX, mouseY, 3, color)
+        }
+    })
 });
 
 // select change

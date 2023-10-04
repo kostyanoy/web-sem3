@@ -10,20 +10,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/app/*")
+import com.example.lab2.beans.Rows;
+
+@WebServlet("/app")
 public class ControllerServlet extends HttpServlet {
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/secured/form.jsp");
-        var params = request.getParameterMap();
-
-        if (params.keySet().containsAll(List.of("x", "y", "r"))) {
-            dispatcher = request.getRequestDispatcher("/area-checker");
-        }
-        dispatcher.forward(request, response);
-    }
-
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/secured/form.jsp").forward(req, resp);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/form.jsp");
+        var params = req.getParameterMap().keySet();
+
+        if (params.contains("init")){
+            var session = req.getSession();
+            var attr = session.getAttribute("result");
+            var rows = attr == null ? new Rows() : (Rows)attr;
+            session.setAttribute("result", rows);
+            return;
+        }
+
+        if (params.containsAll(List.of("x", "y", "r"))) {
+            dispatcher = req.getRequestDispatcher("/area-checker");
+        }
+        dispatcher.forward(req, resp);
     }
 }

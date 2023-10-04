@@ -10,26 +10,37 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Map;
 
 @WebServlet("/area-checker")
 public class AreaCheckServlet extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var currentDateTime = java.time.LocalDateTime.now().toString();
-        var start = Instant.now();
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        var start = System.nanoTime(); // start timer
 
         var params = req.getParameterMap();
-        var x = Double.parseDouble(params.get("x")[0]);
-        var y = Double.parseDouble(params.get("y")[0]);
-        var r = Double.parseDouble(params.get("r")[0]);
+        
+        // validate params
+        var x = tryParseDoubleOrNull(params.get("x")[0]);
+        var y = tryParseDoubleOrNull(params.get("y")[0]);
+        var r = tryParseDoubleOrNull(params.get("r")[0]);
+        
+        if (x == null || y == null || r == null || r <= 0) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, String.format("Wrong arguments: x=%s, y=%s, r=%s", x, y, r));
+            return;
+        }
+        
+        // get timezone offset
+        var timezoneOffsetMinutes = tryParseIntOrNull(params.getOrDefault("timezoneOffsetMinutes", new String[] {"0"})[0]);
+        if (timezoneOffsetMinutes == null){
+            timezoneOffsetMinutes = 0;
+        }
+        var formattedDateTime = getCurrentTime(timezoneOffsetMinutes);
 
         var check = new ArrayList<Integer>();
-
-        if (r <= 0) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Wrong arguments");
-        }
-
         if (x <= 0 && y >= 0) check.add(1);
         if (x >= 0 && y >= 0) check.add(2);
         if (x >= 0 && y <= 0) check.add(3);
@@ -37,11 +48,12 @@ public class AreaCheckServlet extends HttpServlet {
 
         var inside = "Нет";
 
+        // process point and figure
         for (var index : check) {
-            var figure = params.get("figure" + index)[0];
-            var figureR = ("r".equals(params.get("radius" + index)[0])) ? r : r / 2;
-            var figureH = ("r".equals(params.get("height" + index)[0])) ? r : r / 2;
-            var figureW = ("r".equals(params.get("width" + index)[0])) ? r : r / 2;
+            var figure = getStringParam(params, "figure" + index);
+            var figureR = ("r".equals(getStringParam(params, "radius" + index))) ? r : r / 2;
+            var figureH = ("r".equals(getStringParam(params, "height" + index))) ? r : r / 2;
+            var figureW = ("r".equals(getStringParam(params, "width" + index))) ? r : r / 2;
 
             if (checkInsideFigure(figure, figureR, figureH, figureW, x, y, r)) {
                 inside = "Да";
@@ -49,10 +61,16 @@ public class AreaCheckServlet extends HttpServlet {
             }
         }
 
-        var executionTime = Duration.between(start, Instant.now()).toMillis() + " ms";
+        if (getStringParam(params, "clickHandle") != ""){
+            resp.setContentType("text/plain;charset=UTF-8");
+            resp.getWriter().println(inside == "Да");
+            return;
+        }
+
+        var executionTime = (System.nanoTime() - start);
 
         String row = "<tr>" +
-                "<td>" + currentDateTime + "</td>" +
+                "<td>" + formattedDateTime + "</td>" +
                 "<td>" + executionTime + "</td>" +
                 "<td>" + r + "</td>" +
                 "<td>" + x + "</td>" +
@@ -60,6 +78,7 @@ public class AreaCheckServlet extends HttpServlet {
                 "<td>" + inside + "</td>" +
                 "</tr>";
 
+        // storage 
         var session = req.getSession();
         var attr = session.getAttribute("result");
         var rows = attr == null ? new Rows() : (Rows)attr;
@@ -67,9 +86,10 @@ public class AreaCheckServlet extends HttpServlet {
 
         session.setAttribute("result", rows);
 
-        req.getRequestDispatcher("/secured/result.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/result.jsp").forward(req, resp); 
     }
-
+    
+    // process point and figure
     private static boolean checkInsideFigure(String figure, double fr, double fh, double fw, double x, double y, double r) {
         switch (figure) {
             case "rectangle":
@@ -81,6 +101,40 @@ public class AreaCheckServlet extends HttpServlet {
             default:
                 return false;
         }
+    }
+    // try to parse double from parameters
+    private Double tryParseDoubleOrNull(String str) {
+        try {
+            var x = Double.parseDouble(str);
+            return x;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    // try to parse int from parameters
+    private Integer tryParseIntOrNull(String str) {
+        try {
+            var x = Integer.parseInt(str);
+            return x;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    // get current time with offset
+    private String getCurrentTime(int offsetMinutes) {
+        ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC)
+        .plusMinutes(offsetMinutes);
+
+        // Format the time as 'yyyy-MM-dd HH:mm:ss'
+        String formattedTime = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return formattedTime;
+    }
+    // try to get string param
+    private String getStringParam(Map<String, String[]> params, String name){
+        if (params.get(name) == null) return "";
+        return params.get(name)[0];
     }
 
 }

@@ -12,7 +12,7 @@
 </head>
 <body>
 <%
-    response.sendRedirect("/app");
+    response.sendRedirect("/lab2/app");
 %>
 </body>
 </html>

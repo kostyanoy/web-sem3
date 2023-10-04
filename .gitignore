@@ -1,5 +1,6 @@
-# IDEA files
+# IDE files
 .idea/
+.vscode
 build/
 
 # log
