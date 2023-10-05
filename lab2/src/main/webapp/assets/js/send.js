@@ -6,7 +6,7 @@ $(document).ready(function () { // wait until loading of document
     })
 
     // checkboxes
-    initCheckboxes();
+    initInputs();
 
     $("#time-offset").val(-(new Date().getTimezoneOffset())); // set user's date-time
 
@@ -29,7 +29,16 @@ function showTable(response) {
     $("#response-table").html(response);
 }
 
-function initCheckboxes() {
+function initInputs() {
+    $("input[type=number]").on("input", function() {
+        var maxLength = parseInt($(this).attr("maxlength"));
+        var currentValue = $(this).val();
+
+        if (currentValue.length > maxLength) {
+            $(this).val(currentValue.slice(0, maxLength)); // Limit to maxLength characters
+        }
+    });
+
     $(".r-checkbox").click(function (event){
         $(".r-checkbox").prop('checked', false);;
         $(this).prop('checked', true);;
@@ -47,7 +56,6 @@ function saveFormData() {
     const formData = {};
     // Loop through form elements and save their values
     for (const element of $("#point-form")[0].elements) {
-        console.log(element.name, element.value);
         if (element.type != "checkbox") {
             formData[element.name] = element.value;
         }

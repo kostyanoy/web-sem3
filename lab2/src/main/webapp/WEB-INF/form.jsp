@@ -37,7 +37,7 @@
             </div>
             <div class="point-option">
                 <label for="y">Y: </label>
-                <input type="number" name="y" id="y" min="-3" max="5" required>
+                <input type="number" name="y" id="y" min="-3" max="5" maxlength="3" required>
             </div>
             <div class="point-option">
                 <label for="r">R: </label>

@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -69,20 +67,11 @@ public class AreaCheckServlet extends HttpServlet {
 
         var executionTime = (System.nanoTime() - start);
 
-        String row = "<tr>" +
-                "<td>" + formattedDateTime + "</td>" +
-                "<td>" + executionTime + "</td>" +
-                "<td>" + r + "</td>" +
-                "<td>" + x + "</td>" +
-                "<td>" + y + "</td>" +
-                "<td>" + inside + "</td>" +
-                "</tr>";
-
         // storage 
         var session = req.getSession();
         var attr = session.getAttribute("result");
         var rows = attr == null ? new Rows() : (Rows)attr;
-        rows.setLastRow(row);
+        rows.setLastRow(formattedDateTime, ""+executionTime, ""+r, ""+x, ""+y, inside);
 
         session.setAttribute("result", rows);
 

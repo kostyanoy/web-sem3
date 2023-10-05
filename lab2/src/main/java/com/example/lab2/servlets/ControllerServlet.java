@@ -18,6 +18,7 @@ public class ControllerServlet extends HttpServlet {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/form.jsp");
         var params = req.getParameterMap().keySet();
 
+        // show table for init request
         if (params.contains("init")){
             var session = req.getSession();
             var attr = session.getAttribute("result");
